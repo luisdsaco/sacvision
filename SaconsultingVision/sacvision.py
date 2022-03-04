@@ -20,6 +20,10 @@ from matplotlib.backends.qt_compat import QtCore,QtWidgets,QtGui
 
 
 class SacWindow(QtWidgets.QMainWindow):
+    """
+    Main Qt Window for Sacvision
+    """
+    
     def __init__(self, parent=None):
         super(SacWindow,self).__init__(parent)
         self.resize(512,512)
@@ -137,6 +141,10 @@ class SacWindow(QtWidgets.QMainWindow):
 
                 
 class SacThreadOperation(Thread):
+    """
+    Base class for different operations with images
+    """
+    
     def __init__(self,process=None):
         Thread.__init__(self)
         self.image = None
@@ -187,6 +195,11 @@ class SacThreadOperation(Thread):
         self.mainloop()
 
 class SacAcquisitioncv(SacThreadOperation):
+    """
+    Initial class to acquire images using the OpenCV interface.
+    It is not used with the Qt interface
+    """
+    
     def __init(self,process=None):
         SacThreadOperation.__init__(self,process)
         self.windowName = 'Saconsulting Acquisition'
@@ -198,6 +211,10 @@ class SacAcquisitioncv(SacThreadOperation):
         cv2.imshow(self.windowName,self.image)
         
 class SacAcquisition(SacThreadOperation):
+    """
+    Acquire images through the Qt interface.
+    Show the source image from the camera.
+    """
     def __init__(self,process=None):
         SacThreadOperation.__init__(self,process)
         
@@ -217,6 +234,11 @@ class SacAcquisition(SacThreadOperation):
             self.process.window.update()
 
 class SacSobelAcquisition(SacAcquisition):
+    """
+    Acquire images through the Qt interface.
+    Shows the Sobel operator of the source image from the camera
+    """
+    
     def mainoperation(self):
         if self.process is not None:
             im = self.process.doprocesssobel(self.image)
@@ -226,6 +248,11 @@ class SacSobelAcquisition(SacAcquisition):
             self.process.window.update()
 
 class SacSmoothAcquisition(SacAcquisition):
+    """
+    Acquire images through the Qt interface.
+    Shows the smoothed image of the source image from the camera
+    """
+    
     def mainoperation(self):
         if self.process is not None:
             im = self.process.doprocesssmooth(self.image)
@@ -235,6 +262,10 @@ class SacSmoothAcquisition(SacAcquisition):
             self.process.window.update()
 
 class SacHistoWidget(FigureCanvas):
+    """
+    Draw an histogram from a set of data
+    """
+    
     def __init__(self,fig):
         super().__init__(fig)
         self.data = np.zeros(256)
@@ -252,6 +283,9 @@ class SacHistoWidget(FigureCanvas):
         
     
 class SacProcess():
+    """
+    Define methods for image processing with OpenCV and change the Qt GUI
+    """
     def __init__(self,win,param=None):
         self.window = win
         self.inp = None
@@ -399,6 +433,10 @@ class SacProcess():
         plt.close('all')
         
 class SacApp(QtWidgets.QApplication):
+    """
+    Main Qt application
+    """
+    
     def __init__(self,param):
         super(SacApp,self).__init__(param)
 
