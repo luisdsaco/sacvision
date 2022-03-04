@@ -15,7 +15,6 @@ from matplotlib.backends.backend_qtagg import FigureCanvas
 import sys
 from threading import Thread
 
-#from qtpy import QtCore,QtWidgets,QtGui
 from matplotlib.backends.qt_compat import QtCore,QtWidgets,QtGui
 
 
@@ -337,7 +336,6 @@ class SacProcess():
             self.acqthread = SacAcquisition(self)
         else:
             self.acqthread = acqdict[self.filter](self)
-        #self.acqthread = SacAcquisitioncv()
         self.acqthread.start()
         
     def stopAcquisition(self):
@@ -352,8 +350,6 @@ class SacProcess():
             self.main()
         self.createfromBGRimage(self.outp)
         self.showimage()
-#        vp = self.window.graphicsview.viewport()
-#        vp.update()
         self.gethist(self.outp)
         self.showhistogram()
         self.window.update()       
@@ -363,8 +359,6 @@ class SacProcess():
             self.getinput()
         self.createfromBGRimage(self.inp)
         self.showimage()
-#        vp = self.window.graphicsview.viewport()
-#        vp.update()
         self.gethist(self.inp)
         self.showhistogram()
         self.window.update()
@@ -402,7 +396,6 @@ class SacProcess():
         self.window.histo.plot()
                
     def close(self):
-        #cv2.destroyAllWindows()
         plt.close('all')
         
 class SacApp(QtWidgets.QApplication):
