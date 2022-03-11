@@ -62,23 +62,34 @@ class SacWindow(QtWidgets.QMainWindow):
         filemenu = {"New":self.mainproc.getnew,\
                     "Open":self.openfile,\
                     "Save":self.savefile,\
-                    "Quit":self.close}
+                    "Quit":self.close
+                    }
     
         acqmenu = {"Start":self.mainproc.startAcquisition,\
-                   "Stop":self.mainproc.stopAcquisition}
+                   "Stop":self.mainproc.stopAcquisition
+                   }
         
         viewmenu = {"Input":self.mainproc.showinput,\
-                "Output":self.mainproc.showoutput}
+                    "Output":self.mainproc.showoutput
+                    }
         
         opsmenu = {"None":self.mainproc.filternone,\
                    "Sobel":self.mainproc.filtersobel,\
-                   "Smooth":self.mainproc.filtersmooth}
+                   "Smooth":self.mainproc.filtersmooth
+                   }
+            
+        hlpmenu = {"About":self.aboutmessage,\
+                   "Qt Version":self.qtversion
+                   }
         
         menu = self.menuBar()
         file = menu.addMenu("File")
         acq = menu.addMenu("Acquisition")
         view = menu.addMenu("View")
         ops = menu.addMenu("Operations")
+        hlp = menu.addMenu("Help")
+        
+        opsgroup = QtWidgets.QActionGroup(self)
         
         self.actions = {}
         
@@ -99,13 +110,24 @@ class SacWindow(QtWidgets.QMainWindow):
             view.addAction(f)
             f.triggered.connect(function)
             self.actions[entry] = f
-            
+                       
         for entry, function in opsmenu.items():
             f = QtWidgets.QAction(entry,self)
+            opsgroup.addAction(f)
+            f.setCheckable(True)
             ops.addAction(f)
             f.triggered.connect(function)
             self.actions[entry] = f
+        opsgroup.setExclusive(True)
+
+        for entry, function in hlpmenu.items():
+            f = QtWidgets.QAction(entry,self)
+            hlp.addAction(f)
+            f.triggered.connect(function)
+            self.actions[entry] = f
             
+        self.actions['None'].setChecked(True)
+
         self.actions['Stop'].setEnabled(False)
         self.actions['Save'].setEnabled(False)
         self.actions['Output'].setEnabled(False)
@@ -129,8 +151,15 @@ class SacWindow(QtWidgets.QMainWindow):
                 (self,'Save file','.',"Image files (*.jpg *.gif)")
         if len(fname)>0:
             self.mainproc.saveoutput(fname)
+
+    def aboutmessage(self):
+        QtWidgets.QMessageBox.about(self,"About","Sacvision 0.0.1\n\n"
+                                    "(c) 2017 Saconsulting Advanced"
+                                    " Consultancy Services")        
+    
+    def qtversion(self):
+        QtWidgets.QMessageBox.aboutQt(self,"Qt Version")
         
-       
     def closeEvent(self, event):
         self.mainproc.close()
         
