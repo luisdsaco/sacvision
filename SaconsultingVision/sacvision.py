@@ -3,6 +3,21 @@
 Editor de Spyder
 
 Programa: Sacvision. Módulo: main. Version: 0.0.1
+
+(C) 2017-2022 Luis Díaz Saco
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU Affero General Public License as published
+    by the Free Software Foundation, either version 3 of the License, or
+    any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU Affero General Public License for more details.
+
+    You should have received a copy of the GNU Affero General Public License
+    along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
 import cv2
@@ -79,7 +94,8 @@ class SacWindow(QtWidgets.QMainWindow):
                    }
             
         hlpmenu = {"About":self.aboutmessage,\
-                   "Qt Version":self.qtversion
+                   "Qt Version":self.qtversion,\
+                   "License":self.saclicense
                    }
         
         menu = self.menuBar()
@@ -154,11 +170,26 @@ class SacWindow(QtWidgets.QMainWindow):
 
     def aboutmessage(self):
         QtWidgets.QMessageBox.about(self,"About","Sacvision 0.0.1\n\n"
-                                    "(c) 2017 Saconsulting Advanced"
-                                    " Consultancy Services")        
+                                    "(c) 2017-2022 Luis Díaz Saco\n\n"
+                                    "Distributed under GNU AGPLv3 License")        
     
     def qtversion(self):
         QtWidgets.QMessageBox.aboutQt(self,"Qt Version")
+        
+    def saclicense(self):
+        QtWidgets.QMessageBox.about(self,"License",
+            "This program is free software: you can redistribute it and/or "
+            "modify it under the terms of the GNU Affero General Public "
+            "License as published by the Free Software Foundation, either "
+            "version 3 of the License, or any later version.\n\n"
+            "This program is distributed in the hope that it will be useful,"
+            " but WITHOUT ANY WARRANTY; without even the implied warranty of"
+            " MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the"
+            " GNU Affero General Public License for more details.\n\n"
+            "You should have received a copy of the GNU Affero General Public "
+            "License along with this program.  If not, see "
+            "<https://www.gnu.org/licenses/>.\n\n"
+            "Contact the author at saconsultingacs@outlook.com")
         
     def closeEvent(self, event):
         self.mainproc.close()
@@ -470,8 +501,7 @@ class SacApp(QtWidgets.QApplication):
         super(SacApp,self).__init__(param)
 
 if __name__ == '__main__':
-    print ('Sacvision 0.0.1: (c) 2017 Saconsulting Servicios Avanzados de'
-           ' consultoría')
+    print ('Sacvision 0.0.1: (c) 2017-2022 Luis Díaz Saco')
     app = SacApp(sys.argv)
     win = SacWindow()
     win.show()
