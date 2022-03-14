@@ -44,6 +44,7 @@ class SacWindow(QtWidgets.QMainWindow):
         self.resize(512,512)
         self.move(300,300)
         self.setWindowTitle('Sacvision 0.0.1')
+        self.setWindowIcon(QtGui.QIcon('logo_saconsulting.png'))
         self.header = QtWidgets.QLabel()
         self.header.setAlignment(QtCore.Qt.AlignCenter)
         self.header.setPixmap(QtGui.QPixmap('logo_saconsulting.png'))
@@ -55,7 +56,7 @@ class SacWindow(QtWidgets.QMainWindow):
         self.pixmap = None
         
 
-        self.histo = SacHistoWidget(Figure(figsize=(5,3)))
+        self.histo = SacHistoWidget(Figure(figsize=(5,3),dpi=70))
         self.histo.setMinimumSize(256,100)       
         mainlayout = QtWidgets.QGridLayout()
         
@@ -150,7 +151,6 @@ class SacWindow(QtWidgets.QMainWindow):
 
         self.centralwidget.setLayout(mainlayout)
         self.adjustSize()
-
         
     def processingmenu(self):
         self.close()
