@@ -24,6 +24,7 @@ import cv2
 import numpy as np
 
 from matplotlib import pyplot as plt
+from matplotlib import __version__ as mplver
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
     
@@ -96,6 +97,7 @@ class SacWindow(QtWidgets.QMainWindow):
             
         hlpmenu = {"About":self.aboutmessage,\
                    "Qt Version":self.qtversion,\
+                   "Other libraries":self.libraries,\
                    "License":self.saclicense
                    }
         
@@ -176,6 +178,13 @@ class SacWindow(QtWidgets.QMainWindow):
     def qtversion(self):
         QtWidgets.QMessageBox.aboutQt(self,"Qt Version")
         
+    def libraries(self):
+        mplstr = 'Matplotlib version ' + mplver +'\n\n'
+        ocvstr = 'Opencv version ' + cv2.__version__ + '\n\n'
+        npstr = 'Numpy version ' + np.__version__
+        QtWidgets.QMessageBox.about(self,"About Libraries",
+                                    mplstr + ocvstr + npstr)
+                
     def saclicense(self):
         QtWidgets.QMessageBox.about(self,"License",
             "This program is free software: you can redistribute it and/or "
