@@ -1,0 +1,37 @@
+This program requires the following libraries and python bindings:
+
+- Opencv
+- Matplotlib
+- Numpy
+- PyQt
+
+The program has been developed and tested with the following versions:
+
+- python 3.10.2
+- opencv 4.5.5
+- numpy 1.22.2
+- matplotlib 3.5.1
+- pyqt 5.12.3
+- qt 5.12.9
+
+For anaconda users you can do this with the following comands:
+
+	conda install opencv
+	conda install numpy
+	conda install pyqt
+	conda install matplotlib
+
+If you want to preserve your python environment you can create previously a new environment
+with:
+
+	conda create --name sacvision python=3.10
+	
+This can be done with anaconda navigator too if you prefer to use a GUI. The proper libraries
+can be found at conda-forge. You will need to select the channel before the installation
+commands:
+
+	conda config --add channels conda-forge
+
+Without anaconda, you must install the packages from the system or with pip.
+
+The version 0.0.1 is a development one. Changes can be introduced later.
