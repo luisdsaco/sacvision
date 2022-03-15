@@ -108,6 +108,7 @@ class SacWindow(QtWidgets.QMainWindow):
         ops = menu.addMenu("Operations")
         hlp = menu.addMenu("Help")
         
+        vwgroup = QtWidgets.QActionGroup(self)
         opsgroup = QtWidgets.QActionGroup(self)
         
         self.actions = {}
@@ -126,9 +127,12 @@ class SacWindow(QtWidgets.QMainWindow):
 
         for entry, function in viewmenu.items():
             f = QtWidgets.QAction(entry,self)
+            vwgroup.addAction(f)
+            f.setCheckable(True)
             view.addAction(f)
             f.triggered.connect(function)
             self.actions[entry] = f
+        vwgroup.setExclusive(True)
                        
         for entry, function in opsmenu.items():
             f = QtWidgets.QAction(entry,self)
@@ -144,11 +148,13 @@ class SacWindow(QtWidgets.QMainWindow):
             hlp.addAction(f)
             f.triggered.connect(function)
             self.actions[entry] = f
-            
+        
+        self.actions['Input'].setChecked(True)
         self.actions['None'].setChecked(True)
 
         self.actions['Stop'].setEnabled(False)
         self.actions['Save'].setEnabled(False)
+        self.actions['Input'].setEnabled(False)
         self.actions['Output'].setEnabled(False)
 
         self.centralwidget.setLayout(mainlayout)
@@ -361,7 +367,7 @@ class SacProcess():
         self.outp = None
         self.histim = None
         self.acqthread = None
-        self.filter = None
+        self.filter = 'None'
         if param is None:
             self.param = 'lena.jpg'
         else:
@@ -371,23 +377,23 @@ class SacProcess():
         self.filtersobel()
     
     def filternone(self):
-        self.filter = None
+        self.filter = 'None'
+        if self.inp is not None:
+            self.showinput()
+            self.window.actions['Output'].setEnabled(False)
+            self.window.actions['Save'].setEnabled(False)
         
     def filtersobel(self):
-        if self.inp is None:
-            self.getinput()
         self.filter = 'Sobel'
-        self.outp = self.doprocesssobel(self.inp)
-        self.window.actions['Save'].setEnabled(True)
-        self.window.actions['Output'].setEnabled(True)
+        if self.inp is not None:
+            self.showoutput()
+            self.window.actions['Output'].setEnabled(True)
 
     def filtersmooth(self):
-        if self.inp is None:
-            self.getinput()
         self.filter = 'Smooth'
-        self.outp = self.doprocesssmooth(self.inp)
-        self.window.actions['Save'].setEnabled(True)
-        self.window.actions['Output'].setEnabled(True)
+        if self.inp is not None:
+            self.showoutput()
+            self.window.actions['Output'].setEnabled(True)
         
     def setparam(self,param=None):
         self.param = param
@@ -400,7 +406,11 @@ class SacProcess():
         self.inp = cv2.imread(self.param,cv2.IMREAD_COLOR)
         print('Reading image',self.param)
         self.window.actions['Save'].setEnabled(False)
-        self.window.actions['Output'].setEnabled(False)
+        self.window.actions['Input'].setEnabled(True)
+        if self.filter == 'None':
+            self.window.actions['Output'].setEnabled(False)
+        else:
+            self.window.actions['Output'].setEnabled(True)
         self.showinput()
         
     def saveoutput(self,name):
@@ -411,6 +421,9 @@ class SacProcess():
     def gethist(self,im):
         imggray = cv2.cvtColor(im,cv2.COLOR_BGR2GRAY)
         self.histim = cv2.calcHist([imggray],[0],None,[256],[0,256])
+        
+    def doprocessnone(self,img):
+        return None
             
     def doprocesssobel(self,img):
         imggray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
@@ -435,27 +448,53 @@ class SacProcess():
         
         self.window.actions['Start'].setEnabled(False)
         self.window.actions['Stop'].setEnabled(True)
+        self.window.actions['Input'].setEnabled(False)
+        self.window.actions['Output'].setEnabled(False)
+        self.window.actions['None'].setEnabled(False)
+        self.window.actions['Sobel'].setEnabled(False)
+        self.window.actions['Smooth'].setEnabled(False)
         if self.filter is None:
-            self.acqthread = SacAcquisition(self)
-        else:
-            self.acqthread = acqdict[self.filter](self)
+            self.filter = 'None'
+        self.acqthread = acqdict[self.filter](self)
         self.acqthread.start()
         
     def stopAcquisition(self):
         if self.acqthread is not None and self.acqthread.is_alive():
-            self.inp = self.acqthread.stopAcquisition()
+            self.inp = self.acqthread.stopAcquisition()          
         self.window.actions['Stop'].setEnabled(False)
         self.window.actions['Start'].setEnabled(True)
-        self.window.actions['Output'].setEnabled(False)
+        self.window.actions['Input'].setEnabled(True)
+        if self.filter == 'None':
+            self.window.actions['Output'].setEnabled(False)
+        else:
+            self.window.actions['Output'].setEnabled(True)
+        self.window.actions['None'].setEnabled(True)
+        self.window.actions['Sobel'].setEnabled(True)
+        self.window.actions['Smooth'].setEnabled(True)
+        self.showinput()
+        
+    def applyfilter(self):
+        filterdict = {'None': self.doprocessnone,
+                      'Sobel': self.doprocesssobel,
+                      'Smooth': self.doprocesssmooth
+                      }
+        
+        if self.inp is None:
+            return None
+        else:
+            return filterdict[self.filter](self.inp)        
         
     def showoutput(self):
-        if self.outp is None:
-            self.main()
-        self.createfromBGRimage(self.outp)
-        self.showimage()
-        self.gethist(self.outp)
-        self.showhistogram()
-        self.window.update()       
+        self.outp = self.applyfilter()
+        
+        if self.outp is not None:
+            self.createfromBGRimage(self.outp)
+            self.showimage()
+            self.gethist(self.outp)
+            self.showhistogram()
+            self.window.update()
+            self.window.actions['Output'].setChecked(True)
+            self.window.actions['Save'].setEnabled(True)
         
     def showinput(self):
         if self.inp is None:
@@ -465,7 +504,8 @@ class SacProcess():
         self.gethist(self.inp)
         self.showhistogram()
         self.window.update()
-
+        self.window.actions['Input'].setChecked(True)
+        
     def createfromBGRimage(self,image):
         imrgb = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
         qim = QtGui.QImage(imrgb.data, imrgb.shape[1], imrgb.shape[0],\
