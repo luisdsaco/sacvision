@@ -91,7 +91,7 @@ class SacWindow(QtWidgets.QMainWindow):
                     }
         
         opsmenu = {"None":self.mainproc.filternone,\
-                   "Sobel":self.mainproc.filtersobel,\
+                   "Edges":self.mainproc.filteredges,\
                    "Smooth":self.mainproc.filtersmooth
                    }
             
@@ -308,15 +308,15 @@ class SacAcquisition(SacThreadOperation):
             self.process.showhistogram()
             self.process.window.update()
 
-class SacSobelAcquisition(SacAcquisition):
+class SacEdgesAcquisition(SacAcquisition):
     """
     Acquire images through the Qt interface.
-    Shows the Sobel operator of the source image from the camera
+    Shows an edge detection operator of the source image from the camera
     """
     
     def mainoperation(self):
         if self.process is not None:
-            im = self.process.doprocesssobel(self.image)
+            im = self.process.doprocessedges(self.image)
             self.process.createfromBGRimage(im)
             self.process.gethist(im)
             self.process.showhistogram()
@@ -374,7 +374,7 @@ class SacProcess():
             self.param = param
 
     def main(self):
-        self.filtersobel()
+        self.filteredges()
     
     def filternone(self):
         self.filter = 'None'
@@ -383,8 +383,8 @@ class SacProcess():
             self.window.actions['Output'].setEnabled(False)
             self.window.actions['Save'].setEnabled(False)
         
-    def filtersobel(self):
-        self.filter = 'Sobel'
+    def filteredges(self):
+        self.filter = 'Edges'
         if self.inp is not None:
             self.showoutput()
             self.window.actions['Output'].setEnabled(True)
@@ -425,7 +425,7 @@ class SacProcess():
     def doprocessnone(self,img):
         return None
             
-    def doprocesssobel(self,img):
+    def doprocessedges(self,img):
         imggray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
         kernel = np.ones((3,3),np.uint8)
         imgop = cv2.morphologyEx(imggray, cv2.MORPH_OPEN, kernel)
@@ -443,7 +443,7 @@ class SacProcess():
 
     def startAcquisition(self):
         acqdict = {'None': SacAcquisition,
-                   'Sobel': SacSobelAcquisition,
+                   'Edges': SacEdgesAcquisition,
                    'Smooth': SacSmoothAcquisition}
         
         self.window.actions['Start'].setEnabled(False)
@@ -451,7 +451,7 @@ class SacProcess():
         self.window.actions['Input'].setEnabled(False)
         self.window.actions['Output'].setEnabled(False)
         self.window.actions['None'].setEnabled(False)
-        self.window.actions['Sobel'].setEnabled(False)
+        self.window.actions['Edges'].setEnabled(False)
         self.window.actions['Smooth'].setEnabled(False)
         if self.filter is None:
             self.filter = 'None'
@@ -469,13 +469,13 @@ class SacProcess():
         else:
             self.window.actions['Output'].setEnabled(True)
         self.window.actions['None'].setEnabled(True)
-        self.window.actions['Sobel'].setEnabled(True)
+        self.window.actions['Edges'].setEnabled(True)
         self.window.actions['Smooth'].setEnabled(True)
         self.showinput()
         
     def applyfilter(self):
         filterdict = {'None': self.doprocessnone,
-                      'Sobel': self.doprocesssobel,
+                      'Edges': self.doprocessedges,
                       'Smooth': self.doprocesssmooth
                       }
         
