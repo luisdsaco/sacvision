@@ -46,6 +46,7 @@ class SacWindow(QtWidgets.QMainWindow):
         self.move(300,300)
         self.setWindowTitle('Sacvision 0.0.1')
         self.setWindowIcon(QtGui.QIcon('logo_saconsulting.png'))
+        self.statusBar().showMessage('Sacvision 0.0.1. (c) Luis Díaz Saco')
         self.header = QtWidgets.QLabel()
         self.header.setAlignment(QtCore.Qt.AlignCenter)
         self.header.setPixmap(QtGui.QPixmap('logo_saconsulting.png'))
@@ -92,7 +93,8 @@ class SacWindow(QtWidgets.QMainWindow):
         
         opsmenu = {"None":self.mainproc.filternone,\
                    "Edges":self.mainproc.filteredges,\
-                   "Smooth":self.mainproc.filtersmooth
+                   "Smooth":self.mainproc.filtersmooth,\
+                   "Freq":self.mainproc.filterfreq
                    }
             
         hlpmenu = {"About":self.aboutmessage,\
@@ -116,12 +118,14 @@ class SacWindow(QtWidgets.QMainWindow):
         for entry, function in filemenu.items():
             f = QtWidgets.QAction(entry,self)
             file.addAction(f)
+            f.setStatusTip("File actions")
             f.triggered.connect(function)
             self.actions[entry] = f
 
         for entry, function in acqmenu.items():
             f = QtWidgets.QAction(entry,self)
             acq.addAction(f)
+            f.setStatusTip("Acquisition actions")
             f.triggered.connect(function)
             self.actions[entry] = f
 
@@ -130,6 +134,7 @@ class SacWindow(QtWidgets.QMainWindow):
             vwgroup.addAction(f)
             f.setCheckable(True)
             view.addAction(f)
+            f.setStatusTip("View images")
             f.triggered.connect(function)
             self.actions[entry] = f
         vwgroup.setExclusive(True)
@@ -139,6 +144,7 @@ class SacWindow(QtWidgets.QMainWindow):
             opsgroup.addAction(f)
             f.setCheckable(True)
             ops.addAction(f)
+            f.setStatusTip("Operations")
             f.triggered.connect(function)
             self.actions[entry] = f
         opsgroup.setExclusive(True)
@@ -146,6 +152,7 @@ class SacWindow(QtWidgets.QMainWindow):
         for entry, function in hlpmenu.items():
             f = QtWidgets.QAction(entry,self)
             hlp.addAction(f)
+            f.setStatusTip("Help actions")
             f.triggered.connect(function)
             self.actions[entry] = f
         
@@ -336,6 +343,20 @@ class SacSmoothAcquisition(SacAcquisition):
             self.process.showhistogram()
             self.process.window.update()
 
+class SacFreqAcquisition(SacAcquisition):
+    """
+    Acquire images through the Qt interface.
+    Shows the smoothed image of the source image from the camera
+    """
+    
+    def mainoperation(self):
+        if self.process is not None:
+            im = self.process.doprocessfrequency(self.image)
+            self.process.createfromBGRimage(im)
+            self.process.gethist(im)
+            self.process.showhistogram()
+            self.process.window.update()
+
 class SacHistoWidget(FigureCanvas):
     """
     Draw an histogram from a set of data
@@ -394,6 +415,12 @@ class SacProcess():
         if self.inp is not None:
             self.showoutput()
             self.window.actions['Output'].setEnabled(True)
+            
+    def filterfreq(self):
+        self.filter = 'Freq'
+        if self.inp is not None:
+            self.showoutput()
+            self.window.actions['Output'].setEnabled(True)
         
     def setparam(self,param=None):
         self.param = param
@@ -438,13 +465,24 @@ class SacProcess():
         return cv2.cvtColor(imgthr,cv2.COLOR_GRAY2BGR)
 
     def doprocesssmooth(self,img):        
-        return cv2.blur(img,(3,3))  
+        return cv2.blur(img,(3,3)) 
+    
+    def doprocessfrequency(self,img):
+        imggray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
+        imgfreq = np.fft.fft2(imggray)
+        imgfreq = np.fft.fftshift(imgfreq)
+        imgabs = np.absolute(imgfreq)
+        imglog = np.log(imgabs)
+        imgres = np.uint8(imglog*255/imglog.max())
+        return cv2.cvtColor(imgres,cv2.COLOR_GRAY2BGR)
 
 
     def startAcquisition(self):
         acqdict = {'None': SacAcquisition,
                    'Edges': SacEdgesAcquisition,
-                   'Smooth': SacSmoothAcquisition}
+                   'Smooth': SacSmoothAcquisition,
+                   'Freq': SacFreqAcquisition
+                   }
         
         self.window.actions['Start'].setEnabled(False)
         self.window.actions['Stop'].setEnabled(True)
@@ -453,9 +491,11 @@ class SacProcess():
         self.window.actions['None'].setEnabled(False)
         self.window.actions['Edges'].setEnabled(False)
         self.window.actions['Smooth'].setEnabled(False)
+        self.window.actions['Freq'].setEnabled(False)
         if self.filter is None:
             self.filter = 'None'
         self.acqthread = acqdict[self.filter](self)
+        self.window.statusBar().showMessage('Acquiring image from camera')
         self.acqthread.start()
         
     def stopAcquisition(self):
@@ -471,12 +511,14 @@ class SacProcess():
         self.window.actions['None'].setEnabled(True)
         self.window.actions['Edges'].setEnabled(True)
         self.window.actions['Smooth'].setEnabled(True)
+        self.window.actions['Freq'].setEnabled(True)
         self.showinput()
         
     def applyfilter(self):
         filterdict = {'None': self.doprocessnone,
                       'Edges': self.doprocessedges,
-                      'Smooth': self.doprocesssmooth
+                      'Smooth': self.doprocesssmooth,
+                      'Freq': self.doprocessfrequency
                       }
         
         if self.inp is None:
@@ -495,6 +537,7 @@ class SacProcess():
             self.window.update()
             self.window.actions['Output'].setChecked(True)
             self.window.actions['Save'].setEnabled(True)
+            self.window.statusBar().showMessage('Output Image')
         
     def showinput(self):
         if self.inp is None:
@@ -505,6 +548,7 @@ class SacProcess():
         self.showhistogram()
         self.window.update()
         self.window.actions['Input'].setChecked(True)
+        self.window.statusBar().showMessage('Input Image')
         
     def createfromBGRimage(self,image):
         imrgb = cv2.cvtColor(image,cv2.COLOR_BGR2RGB)
