@@ -34,4 +34,15 @@ commands:
 
 Without anaconda, you must install the packages from the system or with pip.
 
+For instance, in ubuntu you will need to introduce the following command:
+
+	sudo apt install python3-opencv python3-numpy python3-matplolib python3-pyqt5
+
+in order to install the python bindings.
+
+It is possible that minimal modifications in the code can be needed depending on the OS
+version. Last Ubuntu includes previous versions of the libraries. We do not guarantee the
+program works with other libraries than previously indicated. That is the reason why anaconda
+with conda-forge is recommended.
+
 The version 0.0.1 is a development one. Changes can be introduced later.

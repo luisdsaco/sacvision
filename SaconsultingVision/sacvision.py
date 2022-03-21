@@ -184,6 +184,7 @@ class SacWindow(QtWidgets.QMainWindow):
     
     def getnew(self):
         self.mainproc.getnew()
+        self.showinput()
         self.actions['Save'].setEnabled(False)
         self.vwgroup.setEnabled(True)
 
@@ -201,8 +202,6 @@ class SacWindow(QtWidgets.QMainWindow):
             else:
                 self.actions['Output'].setEnabled(True)
             self.update()
-            self.actions['Input'].setChecked(True)
-            self.statusBar().showMessage('Input Image')
 
     def savefile(self):
         fname, ftype = QtWidgets.QFileDialog.getSaveFileName(
@@ -505,7 +504,7 @@ class SacHistoWidget(FigureCanvas):
 
 class SacProcess():
     """
-    Define methods for image processing with OpenCV and change the Qt GUI
+    Define methods for image processing with OpenCV
     """
 
     def __init__(self, param=None):
@@ -546,12 +545,11 @@ class SacProcess():
 
     def getnew(self):
         self.inp = cv2.imread('lena.jpg', cv2.IMREAD_COLOR)
-        self.showinput()
+        print('New input image set to the default image')
 
     def getinput(self):
         self.inp = cv2.imread(self.param, cv2.IMREAD_COLOR)
         print('Reading image', self.param)
-        self.showinput()
 
     def saveoutput(self, name):
         if self.outp is not None:
@@ -586,7 +584,7 @@ class SacProcess():
         imgfreq = np.fft.fftshift(imgfreq)
         imgabs = np.absolute(imgfreq)
         imglog = np.log(imgabs)
-        imgones = np.ones(imglog.shape,imglog.dtype)
+        imgones = np.ones_like(imglog)
         imgres = np.uint8(
                 (imglog-imgones*imglog.min())*255/(imglog.max()-imglog.min()))
         return cv2.cvtColor(imgres, cv2.COLOR_GRAY2BGR)
