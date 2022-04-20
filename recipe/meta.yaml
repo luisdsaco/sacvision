@@ -1,0 +1,23 @@
+package:
+  name: sacvision
+  version: "0.0.1"
+
+requirements:
+  build:
+    - python >=3.10
+    - setuptools
+
+  run:
+    - python
+    - numpy
+    - matplotlib
+
+source:
+  path: ..
+ 
+build:
+  number: 1
+  entry_points:
+    - sacvision = SaconsultingVision.sacvision:main
+  noarch: python
+

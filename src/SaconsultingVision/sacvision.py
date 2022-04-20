@@ -25,10 +25,16 @@ import numpy as np
 
 from matplotlib import pyplot as plt
 from matplotlib import __version__ as mplver
+from matplotlib.image import imread as mplimread
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_qtagg import FigureCanvas
 
 import sys
+
+from pathlib import Path
+import inspect
+from importlib import resources as DataRes
+
 from threading import Thread
 
 from matplotlib.backends.qt_compat import QtCore, QtWidgets, QtGui
@@ -44,11 +50,27 @@ class SacWindow(QtWidgets.QMainWindow):
         self.resize(512, 512)
         self.move(300, 300)
         self.setWindowTitle('Sacvision 0.0.1')
-        self.setWindowIcon(QtGui.QIcon('logo_saconsulting.png'))
+               
         self.statusBar().showMessage('Sacvision 0.0.1. (c) Luis Díaz Saco')
         self.header = QtWidgets.QLabel()
         self.header.setAlignment(QtCore.Qt.AlignCenter)
-        self.header.setPixmap(QtGui.QPixmap('logo_saconsulting.png'))
+        
+        if __name__ == '__main__':
+            local_dir = Path(inspect.getabsfile(SacWindow)).parent.resolve()
+            logo_name = str(local_dir / 'data/logo_saconsulting.png')
+            self.header.setPixmap(QtGui.QPixmap(logo_name))
+            self.setWindowIcon(QtGui.QIcon(logo_name))
+        else:
+            res_file = DataRes.files("SaconsultingVision")
+            res_file = res_file / "data" / "logo_saconsulting.png"
+            logo_data = res_file.read_bytes()
+            logo_pixmap = QtGui.QPixmap()
+            logo_pixmap.loadFromData(logo_data,'PNG')
+            self.header.setPixmap(logo_pixmap)
+            logo_icon = QtGui.QIcon()
+            logo_icon.addPixmap(logo_pixmap.copy())
+            self.setWindowIcon(logo_icon)
+        
         self.pixmapit = None
         self.graphicsscene = QtWidgets.QGraphicsScene(0, 0, 512, 512)
         self.graphicsview = QtWidgets.QGraphicsView(self.graphicsscene)
@@ -512,8 +534,10 @@ class SacProcess():
         self.outp = None
         self.histim = None
         self.filter = 'None'
+        local_dir = Path(inspect.getabsfile(SacWindow)).parent.resolve()
+        self.default_img = str(local_dir / 'data/lena.jpg')
         if param is None:
-            self.param = 'lena.jpg'
+            self.param = self.default_img
         else:
             self.param = param
 
@@ -544,8 +568,15 @@ class SacProcess():
         self.param = param
 
     def getnew(self):
-        self.inp = cv2.imread('lena.jpg', cv2.IMREAD_COLOR)
-        print('New input image set to the default image')
+        if __name__ == '__main__':
+            self.inp = cv2.imread(self.default_img, cv2.IMREAD_COLOR)
+            print('New input image set to the default image')
+        else:
+            res_file = DataRes.files("SaconsultingVision")
+            res_file = res_file / "data" / "lena.jpg"
+            with DataRes.as_file(res_file) as data:
+                inp_im = mplimread(data,'JPG')
+                self.inp = cv2.cvtColor(inp_im,cv2.COLOR_RGB2BGR)
 
     def getinput(self):
         self.inp = cv2.imread(self.param, cv2.IMREAD_COLOR)
@@ -642,12 +673,14 @@ class SacApp(QtWidgets.QApplication):
     def __init__(self, param):
         super(SacApp, self).__init__(param)
 
-
-if __name__ == '__main__':
-    print('Sacvision 0.0.1: (c) 2017-2022 Luis Díaz Saco')
+def main():
     app = SacApp(sys.argv)
     win = SacWindow()
     win.show()
 
     ret = app.exec_()
-    sys.exit(ret)
+    return ret
+    
+if __name__ == '__main__':
+    print('Sacvision 0.0.1: (c) 2017-2022 Luis Díaz Saco')
+    sys.exit(main())
