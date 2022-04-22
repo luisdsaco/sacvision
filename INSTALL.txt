@@ -1,3 +1,26 @@
+
+INSTALLING DIRECTY FROM ANACONDA REPOSITORIES
+---------------------------------------------
+
+Its possible to get both versions of the package directly from anaconda repositories.
+
+Conda users:
+
+	conda install -c luisdsaco sacvision
+	
+Pip users:
+
+	pip install -i https://pypi.anaconda.org/luisdsaco/simple sacvision
+
+This should be the preferred option.
+
+You must enter to execute the program:
+
+	sacvision
+
+INSTALLING FROM SOURCE CODE AT GITHUB REPOSITORY
+------------------------------------------------
+
 This program requires the following libraries and python bindings:
 
 - Opencv
@@ -14,12 +37,13 @@ The program has been developed and tested with the following versions:
 - pyqt 5.12.3
 - qt 5.12.9
 
-For anaconda users you can do this with the following comands:
+Anaconda users can do this with the following comands:
 
 	conda install opencv
 	conda install numpy
-	conda install pyqt
 	conda install matplotlib
+
+This will install all their dependencies.
 
 If you want to preserve your python environment you can create previously a new environment
 with:
@@ -31,14 +55,26 @@ can be found at conda-forge. You will need to select the channel before the inst
 commands:
 
 	conda config --add channels conda-forge
+	
+The package can be built and install with the following commands
+	
+	conda build recipe
+	conda install --use-local sacvision
 
-Without anaconda, you must install the packages from the system or with pip.
+Without anaconda, the packages can be installed from the system or with pip.
 
-For instance, in ubuntu you will need to introduce the following command:
+Pip users can build and install the package with:
+
+	pip install
+
+from sacvision main directory.
+
+Ubuntu users can introduce the following command:
 
 	sudo apt install python3-opencv python3-numpy python3-matplolib python3-pyqt5
 
-in order to install the python bindings.
+if they prefer the system libraries instead of building the python packages from pip in order to install the python bindings and the required libraries. Currently the package is configured
+to be built with python 3.10 that is not supported by ubuntu yet.
 
 It is possible that minimal modifications in the code can be needed depending on the OS
 version. Last Ubuntu includes previous versions of the libraries. We do not guarantee the
@@ -46,3 +82,4 @@ program works with other libraries than previously indicated. That is the reason
 with conda-forge is recommended.
 
 The version 0.0.1 is a development one. Changes can be introduced later.
+

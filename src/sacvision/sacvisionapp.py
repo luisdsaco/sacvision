@@ -61,7 +61,7 @@ class SacWindow(QtWidgets.QMainWindow):
             self.header.setPixmap(QtGui.QPixmap(logo_name))
             self.setWindowIcon(QtGui.QIcon(logo_name))
         else:
-            res_file = DataRes.files("SaconsultingVision")
+            res_file = DataRes.files("sacvision")
             res_file = res_file / "data" / "logo_saconsulting.png"
             logo_data = res_file.read_bytes()
             logo_pixmap = QtGui.QPixmap()
@@ -572,7 +572,7 @@ class SacProcess():
             self.inp = cv2.imread(self.default_img, cv2.IMREAD_COLOR)
             print('New input image set to the default image')
         else:
-            res_file = DataRes.files("SaconsultingVision")
+            res_file = DataRes.files("sacvision")
             res_file = res_file / "data" / "lena.jpg"
             with DataRes.as_file(res_file) as data:
                 inp_im = mplimread(data,'JPG')
