@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=0.0.1
+Type=Application
+Name=sacvision
+Exec=sacvision
+Icon=${SNAP}/meta/gui/sacvision.png
+Comment=Computer Vision Demo
+Categories=AudioVideo;
+Terminal=false
+StartupWMClass=sacvisionExec=sacvision
+

@@ -1,0 +1,39 @@
+name: sacvision
+summary: A demonstration of the power of computer vision technology
+description: |
+      This program lets to acqurire images from a camera and to apply some 
+      filters. It's programmed in python and it provides a Qt GUI to
+      run the operations.
+version: 0.0.1
+license: AGPL-3.0
+icon: snap/gui/sacvision.png
+grade: devel
+confinement: strict
+base: core20
+architectures:
+  - build-on: [amd64]
+compression: lzo
+
+apps:
+  sacvision:
+    command: bin/sacvision
+    extensions: [gnome-3-38]
+    plugs: [home, desktop, desktop-legacy, opengl, media-control, camera]
+
+parts:
+  sacvision:
+    plugin: conda
+    conda-packages:
+      - qt
+    conda-python-version: "3.10"
+    override-build: |
+      snapcraftctl build
+      conda install -y -p $SNAPCRAFT_PART_INSTALL -c luisdsaco sacvision
+    stage-packages:
+      - libxss1
+    override-prime: |
+      snapcraftctl prime
+      python_header='#!/snap/sacvision/current/bin/python3.10'
+      sed -i "1c ${python_header}" $SNAPCRAFT_PRIME/bin/sacvision
+      unset python_header
+      
