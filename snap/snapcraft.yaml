@@ -17,8 +17,12 @@ compression: lzo
 apps:
   sacvision:
     command: bin/sacvision
+    environment:
+      DISABLE_WAYLAND: 1
+      QT_XKB_CONFIG_ROOT: $SNAP/share/X11/xkb
+      GTS_PLUGIN_PATH: $SNAP/lib/gstreamer-1.0
     extensions: [gnome-3-38]
-    plugs: [home, desktop, desktop-legacy, opengl, media-control, camera]
+    plugs: [home, desktop, opengl, media-control, camera]
 
 parts:
   sacvision:
@@ -28,7 +32,10 @@ parts:
     conda-python-version: "3.10"
     override-build: |
       snapcraftctl build
+      # Installing sacvision from the developer's anaconda repository
       conda install -y -p $SNAPCRAFT_PART_INSTALL -c luisdsaco sacvision
+      # Library required by Qt that is not in the default repository at run time
+      conda install -y -p $SNAPCRAFT_PART_INSTALL -c conda-forge xkeyboard-config
     stage-packages:
       - libxss1
     override-prime: |
