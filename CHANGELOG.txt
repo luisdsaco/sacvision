@@ -1,0 +1,13 @@
+Version 0.1.1
+-------------
+
+- GUI designed with qtdesigner.
+- Added toolbar.
+- Redesign of the application to use three layer architecture.
+- Code optimization.
+- Snap changed to use core24 platform instead of core20.
+- Use of PySide6 instead of PyQt. Version 6.7.0 integrated.
+- Better control of filters and CV algoritms.
+- Control through signals and slots.
+
+

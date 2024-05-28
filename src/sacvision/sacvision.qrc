@@ -1,0 +1,8 @@
+<RCC>
+  <qresource prefix="/"/>
+  <qresource prefix="images">
+    <file alias="mainlogo.png">data/sacvision.png</file>
+    <file alias="logo.png">data/logo_saconsulting.png</file>
+    <file alias="default.jpg">data/lena.jpg</file>
+  </qresource>
+</RCC>

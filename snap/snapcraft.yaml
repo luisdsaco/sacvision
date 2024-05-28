@@ -4,43 +4,55 @@ description: |
       This program lets to acqurire images from a camera and to apply some 
       filters. It's programmed in python and it provides a Qt GUI to
       run the operations.
-version: 0.0.1
+version: 0.1.1
 license: AGPL-3.0
 icon: snap/gui/sacvision.png
 grade: devel
 confinement: strict
-base: core20
-architectures:
-  - build-on: [amd64]
+base: core24
+platforms:
+  amd64:
+    build-on: [amd64]
+    build-for: [amd64]
 compression: lzo
 
 apps:
   sacvision:
     command: bin/sacvision
+    desktop: meta/gui/sacvision.desktop
     environment:
-      DISABLE_WAYLAND: 1
-      QT_XKB_CONFIG_ROOT: $SNAP/share/X11/xkb
-      GTS_PLUGIN_PATH: $SNAP/lib/gstreamer-1.0
-    extensions: [gnome-3-38]
-    plugs: [home, desktop, opengl, media-control, camera]
-
+      #DISABLE_WAYLAND: 1
+      #QT_XKB_CONFIG_ROOT: $SNAP/share/X11/xkb
+      #GTS_PLUGIN_PATH: $SNAP/lib/gstreamer-1.0
+      #GIO_MODULE_DIR: $SNAP/usr/lib/x86_64-linux-gnu/gio/modules
+      #PATH: $SNAP/usr/bin:$SNAP/bin:$PATH
+      #PYTHONPATH: $SNAP/lib/python3.12/site-packages:$PYTHONPATH
+    extensions: [gnome]
+    plugs:
+      - home
+      - camera
+  init:
+    command: bin/sacvision-init.sh
+      
 parts:
   sacvision:
-    plugin: conda
-    conda-packages:
-      - qt
-    conda-python-version: "3.10"
-    override-build: |
-      snapcraftctl build
-      # Installing sacvision from the developer's anaconda repository
-      conda install -y -p $SNAPCRAFT_PART_INSTALL -c luisdsaco sacvision
-      # Library required by Qt that is not in the default repository at run time
-      conda install -y -p $SNAPCRAFT_PART_INSTALL -c conda-forge xkeyboard-config
+    plugin: python
+    source: .
     stage-packages:
-      - libxss1
-    override-prime: |
-      snapcraftctl prime
-      python_header='#!/snap/sacvision/current/bin/python3.10'
-      sed -i "1c ${python_header}" $SNAPCRAFT_PRIME/bin/sacvision
-      unset python_header
-      
+      - libodbc2
+      - libmysqlclient21
+      - libpq5
+      - libspeechd2
+      - libxkbfile1
+      - libxcb-image0
+      - libxcb-cursor0
+      - libxcb-render0
+      - libxcb-icccm4
+      - libxcb-keysyms1
+      - libxcb-shape0
+      - glib-networking
+  sacvision-init:
+    plugin: dump
+    source: init
+    organize:
+      sacvision-init.sh: bin/

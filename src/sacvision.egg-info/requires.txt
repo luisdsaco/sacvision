@@ -1,0 +1,4 @@
+pyside6
+matplotlib
+numpy
+opencv-contrib-python

@@ -1,10 +1,10 @@
 package:
   name: sacvision
-  version: "0.1.1"
+  version: "0.0.1"
 
 requirements:
   build:
-    - python >=3.12
+    - python >=3.10
     - setuptools
 
   run:

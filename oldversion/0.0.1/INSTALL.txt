@@ -1,0 +1,116 @@
+INSTALLING EXECUTABLE FROM SNAP STORE
+-------------------------------------
+
+sacvision has been built to be used as a snap. You can install it in a linux with snapd
+daemon running with the following command:
+
+sudo snap install sacvision
+
+For security reasons, canonical does not let to connect directly to the camera.
+
+This can be done by the user with the following command:
+
+sudo snap connect sacvision:camera :camera
+
+
+INSTALLING DIRECTY FROM ANACONDA REPOSITORIES
+---------------------------------------------
+
+Its possible to get both versions of the package directly from anaconda repositories.
+
+Conda users:
+
+	conda install -c luisdsaco sacvision
+	
+Pip users:
+
+	pip install -i https://pypi.anaconda.org/luisdsaco/simple sacvision
+
+This should be the preferred option.
+
+You must enter to execute the program:
+
+	sacvision
+
+INSTALLING FROM SOURCE CODE AT GITHUB REPOSITORY
+------------------------------------------------
+
+Go to your working directory for instance:
+
+	cd ~/Documents
+	
+Create a directory for sacvision source code:
+
+	mkdir sacvision
+	cd sacvision
+	
+Get the source code from the git repository:
+
+	git clone https://github.com/luisdsaco/sacvision.git
+
+This program requires the following libraries and python bindings:
+
+- Opencv
+- Matplotlib
+- Numpy
+- PyQt
+
+The program has been developed and tested with the following versions:
+
+- python 3.10.2
+- opencv 4.5.5
+- numpy 1.22.2
+- matplotlib 3.5.1
+- pyqt 5.12.3
+- qt 5.12.9
+
+Anaconda users can do this with the following comands:
+
+	conda install opencv
+	conda install numpy
+	conda install matplotlib
+
+This will install all their dependencies.
+
+If you want to preserve your python environment you can create previously a new environment
+with:
+
+	conda create --name sacvision python=3.10
+	
+and make it active for conda with:
+
+	conda activate sacvision
+	
+This can be done with anaconda navigator too if you prefer to use a GUI. The proper libraries
+can be found at conda-forge. You will need to select the channel before installing the
+libraries:
+
+	conda config --add channels conda-forge
+	
+The package can be built and install with the following commands
+	
+	conda build recipe
+	conda install --use-local sacvision
+
+Without anaconda, the packages can be installed from the system or with pip.
+
+Pip users can build and install the package with:
+
+	pip install
+
+from sacvision main directory.
+
+Ubuntu users can introduce the following command:
+
+	sudo apt install python3-opencv python3-numpy python3-matplolib python3-pyqt5
+
+if they prefer the system libraries instead of building the python packages from pip in order
+to install the python bindings and the required libraries. Currently the package is configured
+to be built with python 3.10, that has been included in Ubuntu 22.04.
+
+It is possible that minimal modifications in the code can be needed depending on the OS
+version. Last Ubuntu includes previous versions of the libraries. We do not guarantee the
+program works with other libraries than previously indicated. That is the reason why snap installation is preferred for testers.
+
+The version 0.0.1 is a development one. Changes can be introduced later.
+

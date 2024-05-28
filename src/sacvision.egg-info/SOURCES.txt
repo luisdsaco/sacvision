@@ -1,0 +1,17 @@
+LICENSE.txt
+README.md
+setup.cfg
+setup.py
+src/sacvision/__init__.py
+src/sacvision/backend.py
+src/sacvision/histowidget.py
+src/sacvision/sacapp.py
+src/sacvision/sacvision_rc.py
+src/sacvision/ui_form.py
+src/sacvision.egg-info/PKG-INFO
+src/sacvision.egg-info/SOURCES.txt
+src/sacvision.egg-info/dependency_links.txt
+src/sacvision.egg-info/entry_points.txt
+src/sacvision.egg-info/requires.txt
+src/sacvision.egg-info/top_level.txt
+src/sacvision/data/sacvision.rcc

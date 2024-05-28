@@ -1,3 +1,4 @@
-matplotlib>=3.5.1
-numpy>=1.22.3
-opencv-contrib-python>=4.5.5
+pyside6>=6.7.0
+matplotlib>=3.6.3
+numpy>=1.26.4
+opencv-contrib-python>=4.6.0

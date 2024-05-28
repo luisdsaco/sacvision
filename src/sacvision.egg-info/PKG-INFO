@@ -1,0 +1,22 @@
+Metadata-Version: 2.1
+Name: sacvision
+Version: 0.1.1
+Summary: Computer Vision Demo.
+Home-page: https://github.com/luisdsaco/sacvision
+Author: luisdsaco
+Author-email: saconsultingacs@outlook.com
+Project-URL: Bug Tracker, https://github.com/luisdsaco/sacvision/issues
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: GNU Affero
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+License-File: LICENSE.txt
+Requires-Dist: pyside6
+Requires-Dist: matplotlib
+Requires-Dist: numpy
+Requires-Dist: opencv-contrib-python
+
+# sacvision
+Demonstration of the power of computer vision technology.
+Coded in python 3.12 👾

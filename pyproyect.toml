@@ -2,3 +2,22 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "spam-eggs"
+version = "2020.0.0"
+dependencies = [
+  "pyside6>=6.7.0",
+  "matplotlib>=3.6.3",
+  "numpy>=1.26.4",
+  "opencv-contrib-python>=4.6.0",
+]
+requires-python = ">=3.12"
+install-requires 0 [
+  "pyside6>=6.7.0",
+  "matplotlib>=3.6.3",
+  "numpy>=1.26.4",
+  "opencv-contrib-python>=4.6.0"
+]
+
+[project.gui-scripts]
+sacvision = "sacvision.sacapp:main"
