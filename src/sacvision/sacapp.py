@@ -117,7 +117,7 @@ class SacWindow(MainWindow):
         
         self.backend.thread.finished.connect(lambda:self.showResult("End of Thread"))
         self.backend.refreshScreen.connect(self.updateScreen)
-        #self.backend.changeSize.connect(self.sizeChanged)
+        
         
     def onNew(self):
         self.ui.actionNew.setEnabled(False)
@@ -269,7 +269,6 @@ class SacWindow(MainWindow):
         
     @Slot(str)
     def showResult(self,res):
-        print("Inicio de showResult")
         self.showImage(self.backend.getOutput())
         self.statusBar().showMessage(res)
         self.ui.actionStart.setEnabled(True)
@@ -277,7 +276,6 @@ class SacWindow(MainWindow):
         self.ui.actionSave.setEnabled(True)
         self.ui.actionSave_As.setEnabled(True)
         self.processGroup.setEnabled(True)
-        print("Fin de showResult")
         self.result = True
         
     @Slot()
@@ -292,7 +290,11 @@ class SacWindow(MainWindow):
         self.ui.graphicsView.setMinimumSize(x,y)
         self.adjustSize()
         
-    
+    @Slot()
+    def close(self)->bool:
+        self.backend.thread.stopOperations()
+        self.backend.thread.wait()
+        return MainWindow.close(self)
         
 class SacApp(QApplication):
     '''
@@ -309,6 +311,7 @@ def main():
     app = SacApp(sys.argv)
     bck = SacBackend()
     win = SacWindow(bck)
+    app.aboutToQuit.connect(win.close)
     win.show()
 
     ret = app.exec()

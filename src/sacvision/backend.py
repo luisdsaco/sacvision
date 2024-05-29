@@ -44,13 +44,11 @@ class SacOperationGroup(SacOperation):
         self.group = gr
         
     def doOperation(self):
-        print("En SacOperationGroup")
         im = np.copy(self.backend.in_image)
         for i in self.group:
             i.doOperation()
         self.backend.in_image = np.copy(im)
         self.endOperation.emit("End Operation Group")
-        print("Fin de SacOperationGroup")
         
 class SacAcquisition(SacOperationGroup):
     
@@ -88,9 +86,7 @@ class SacAcquisition(SacOperationGroup):
 class SacFilterNone(SacOperation):
     
     def doOperation(self):
-        print("En SacFilterNone")
         self.backend.out_image = np.copy(self.backend.in_image)
-        print("Fin de SacFilterNone")
 
 class SacFilterEdges(SacOperation):
     
